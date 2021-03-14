@@ -3,9 +3,9 @@ use crate::matrix::Matrix;
 
 #[derive(Debug)]
 pub struct Particle {
-	position: Matrix,
-	velocity: Matrix,
-	size: u32,
+	pub position: Matrix,
+	pub velocity: Matrix,
+	pub size: u32,
 	pub lifetime: i32
 }
 

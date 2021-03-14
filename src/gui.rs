@@ -4,13 +4,12 @@ pub use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::rect::Point;
 pub use sdl2::render::BlendMode;
+use sdl2::mouse::RelativeMouseState;
 
 pub struct Draw {
-	// sdl_context: sdl2::Sdl,
 	event_pump: sdl2::EventPump,
-	// video_subsystem: sdl2::VideoSubsystem,
-	// window:sdl2::video::Window,
-	canvas: sdl2::render::Canvas<Window>
+	canvas: sdl2::render::Canvas<Window>,
+	mosue_state: RelativeMouseState,
 }
 
 impl Draw {
@@ -18,13 +17,19 @@ impl Draw {
 	pub fn new(width: u32, height: u32) -> Draw{
 
 		let sdl_context = sdl2::init().unwrap();
+		
+		// Hide the cursor
+		sdl_context.mouse().show_cursor(false);
+
 		let event_pump = sdl_context.event_pump().unwrap();
 		let video_subsystem = sdl_context.video();
 		
-		// let window = WindowBuilder::new("Example", 800, 600).build().unwrap();
+		let mosue_state = RelativeMouseState::new(&event_pump);
+
+		// create a window 
 		let window = video_subsystem.unwrap().window("Example", width, height).build().unwrap();
 		
-		// Let's create a Canvas which we will use to draw in our Window
+		// create a Canvas will use to draw in our Window
 		let mut canvas : Canvas<Window> = window.into_canvas()
 		    .present_vsync() //< this means the screen cannot
 		    // render faster than your display rate (usually 60Hz or 144Hz)
@@ -32,7 +37,7 @@ impl Draw {
 
 		canvas.clear();
 
-		Draw {canvas, event_pump}
+		Draw {canvas, event_pump, mosue_state}
 
 	}
 
@@ -53,7 +58,7 @@ impl Draw {
 		let point1 = Point::new(x1, y1);
 		let point2 = Point::new(x2, y2);
 
-		self.canvas.draw_line(point1, point2);
+		self.canvas.draw_line(point1, point2).unwrap();
 		self.canvas.present();
 	}
 
@@ -73,12 +78,20 @@ impl Draw {
 	}
 
 	pub fn blend_mode(&mut self, mode: BlendMode) {
-		self.canvas.set_blend_mode(BlendMode::Add);
+		self.canvas.set_blend_mode(mode);
 	}
-}
 
-pub fn point(x:i32, y:i32) {
+	pub fn is_mouse_pressed(&self) -> bool {
+		self.event_pump.mouse_state().left()
+	}
 
+	pub fn mouse_x(&self) -> i32 {
+		self.event_pump.mouse_state().x()
+	}
+
+	pub fn mouse_y(&self) -> i32 {
+		self.event_pump.mouse_state().y()
+	}
 }
 
 // canvas.set_draw_color(Color::RGB(0, 0, 0));

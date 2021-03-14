@@ -26,7 +26,7 @@ fn main() {
 		draw.stroke(Color { r: 20, g: 20, b: 20 , a:20});
 
 		for _i in 0..2 {
-			let position = Matrix {  arr: vec![vec![200.0], vec![40.0]]  };
+			let position = Matrix {  arr: vec![vec![draw.mouse_x() as f32], vec![draw.mouse_y() as f32]]  };
 			let velocity = Matrix {  arr: vec![vec![(rand::random::<f32>() * 10.0) - 5.0], vec![(rand::random::<f32>() * 10.0) - 5.0]]  };
 			let p = Particle::new(position, velocity, 10);
 			particles.push(p);
@@ -37,6 +37,9 @@ fn main() {
 			p.show(&mut draw);
 		}
 
+		// println!("{:?}", draw.mouse_y());
+
+		// remove dead particles 
 		particles = particles.into_iter().filter(|x| x.lifetime > 0 ).collect();
 
 		draw.handel_window_events();
